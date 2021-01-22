@@ -1,0 +1,67 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Avada Forms to Excel / CSV\n"
+"POT-Creation-Date: 2021-01-22 14:18+0100\n"
+"PO-Revision-Date: 2021-01-22 13:59+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: avadaforms-excel-export.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: admin/class-avadaforms-excel-export-admin.php:226
+msgid "Export options"
+msgstr ""
+
+#: admin/class-avadaforms-excel-export-admin.php:232
+msgid "Export as"
+msgstr ""
+
+#: admin/class-avadaforms-excel-export-admin.php:236
+msgid "Select"
+msgstr ""
+
+#: admin/class-avadaforms-excel-export-admin.php:253
+msgid "Export"
+msgstr ""
+
+#: admin/class-avadaforms-excel-export-admin.php:266
+msgid "Avada Forms"
+msgstr ""
+
+#: includes/class-avadaforms-excel-export-activator.php:40
+msgid "Looks like Avada or Fusion Forms are not installed."
+msgstr ""
+
+#: includes/class-avadaforms-excel-export-activator.php:41
+msgid "Avada Forms to Excel / CSV was not activated."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Avada Forms to Excel / CSV"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "https://www.dueclic.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Easily export your Avada Forms data to Excel / CSV"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "dueclic"
+msgstr ""
