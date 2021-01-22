@@ -172,7 +172,7 @@ class Avadaforms_Excel_Export_Admin {
 
             // # prepare the data set
             $data = array_merge(
-                [$keys],
+                [ array_keys($data[array_key_first($data)]) ],
                 $data
             );
 
