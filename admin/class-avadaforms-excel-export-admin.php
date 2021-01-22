@@ -20,92 +20,98 @@
  * @subpackage Avadaforms_Excel_Export/admin
  * @author     dueclic <info@dueclic.com>
  */
-class Avadaforms_Excel_Export_Admin {
+class Avadaforms_Excel_Export_Admin
+{
 
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
+    /**
+     * The ID of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string $plugin_name The ID of this plugin.
+     */
+    private $plugin_name;
 
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
+    /**
+     * The version of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string $version The current version of this plugin.
+     */
+    private $version;
 
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	public function __construct( $plugin_name, $version ) {
+    /**
+     * Initialize the class and set its properties.
+     *
+     * @param  string  $plugin_name  The name of this plugin.
+     * @param  string  $version      The version of this plugin.
+     *
+     * @since    1.0.0
+     */
+    public function __construct($plugin_name, $version)
+    {
+        $this->plugin_name = $plugin_name;
+        $this->version     = $version;
+    }
 
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+    /**
+     * Register the stylesheets for the admin area.
+     *
+     * @since    1.0.0
+     */
+    public function enqueue_styles()
+    {
+        /**
+         * This function is provided for demonstration purposes only.
+         *
+         * An instance of this class should be passed to the run() function
+         * defined in Avadaforms_Excel_Export_Loader as all of the hooks are defined
+         * in that particular class.
+         *
+         * The Avadaforms_Excel_Export_Loader will then create the relationship
+         * between the defined hooks and the functions defined in this
+         * class.
+         */
 
-	}
+        wp_enqueue_style(
+            $this->plugin_name,
+            plugin_dir_url(__FILE__).'css/avadaforms-excel-export-admin.css',
+            array(), $this->version, 'all'
+        );
+    }
 
-	/**
-	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
+    /**
+     * Register the JavaScript for the admin area.
+     *
+     * @since    1.0.0
+     */
+    public function enqueue_scripts()
+    {
+        /**
+         * This function is provided for demonstration purposes only.
+         *
+         * An instance of this class should be passed to the run() function
+         * defined in Avadaforms_Excel_Export_Loader as all of the hooks are defined
+         * in that particular class.
+         *
+         * The Avadaforms_Excel_Export_Loader will then create the relationship
+         * between the defined hooks and the functions defined in this
+         * class.
+         */
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Avadaforms_Excel_Export_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Avadaforms_Excel_Export_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/avadaforms-excel-export-admin.css', array(), $this->version, 'all' );
-
-	}
-
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Avadaforms_Excel_Export_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Avadaforms_Excel_Export_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/avadaforms-excel-export-admin.js', array( 'jquery' ), $this->version, false );
-
-	}
+        wp_enqueue_script(
+            $this->plugin_name,
+            plugin_dir_url(__FILE__).'js/avadaforms-excel-export-admin.js',
+            array('jquery'), $this->version, false
+        );
+    }
 
     public function export_form()
     {
         if (isset($_GET[AVADAFORMS_EXCEL_EXPORT_FORMID_PARAM])
             && isset($_GET['avadaform_export'])
         ) {
-
             $form_id = intval($_GET[AVADAFORMS_EXCEL_EXPORT_FORMID_PARAM]);
 
             $submissions = new Fusion_Form_DB_Submissions();
@@ -115,7 +121,7 @@ class Avadaforms_Excel_Export_Admin {
 
             $form_submissions = $submissions->get(
                 [
-                    'where'    => [ 'form_id' => $form_id ],
+                    'where'    => ['form_id' => $form_id],
                     'order by' => 'id DESC',
                 ]
             );
@@ -152,7 +158,13 @@ class Avadaforms_Excel_Export_Admin {
                                 $form_id, $field
                             );
                             $field_data               = $entry['value'];
-                            $data[$key][$field_label] = $field_data;
+                            $data[$key][$field_label] = apply_filters(
+                                'avadaforms_export_fieldvalue', $field_data,
+                                $form_id, $field, $form_entries
+                            );
+                            $data[$key][$field_label] = apply_filters(
+                                'avadaforms_export_fieldvalue_form'.$form_id."_field".$field->id, $data[$key][$field_label], $form_entries
+                            );
                             $keys[]                   = $field_label;
                             break;
                         }
@@ -164,15 +176,17 @@ class Avadaforms_Excel_Export_Admin {
                 }
             }
 
-            $ext = (isset($_GET['format']) && $_GET['format'] == 'csv') ? 'csv' : 'xlsx';
+            $ext = (isset($_GET['format']) && $_GET['format'] == 'csv') ? 'csv'
+                : 'xlsx';
 
             $fileLocation = apply_filters(
-                    'avadaforms_export_filename', 'export-'.date("YmdHis"), $form_id
+                    'avadaforms_export_filename', 'export-'.date("YmdHis"),
+                    $form_id
                 ).'.'.$ext;
 
             // # prepare the data set
             $data = array_merge(
-                [ array_keys($data[array_key_first($data)]) ],
+                [array_keys($data[array_key_first($data)])],
                 $data
             );
 
@@ -193,7 +207,8 @@ class Avadaforms_Excel_Export_Admin {
             // # prompt download popup
             header('Content-Description: File Transfer');
             header(
-                "Content-Type: ".($ext == 'csv' ? 'text/csv' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                "Content-Type: ".($ext == 'csv' ? 'text/csv'
+                    : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             );
             header(
                 "Content-Disposition: attachment; filename="
@@ -242,11 +257,12 @@ class Avadaforms_Excel_Export_Admin {
                             XLSX
                         </option>
                     </select>
-                    <button class="button" role="button" onclick="document.location='<?php
-                    echo admin_url(); ?>?form_id=<?php
-                    echo absint(
-                        $_GET[AVADAFORMS_EXCEL_EXPORT_FORMID_PARAM]
-                    ); ?>&avadaform_export=1&format='+document.getElementById('avada_export_format').value">
+                    <button class="button" role="button"
+                            onclick="document.location='<?php
+                            echo admin_url(); ?>?form_id=<?php
+                            echo absint(
+                                $_GET[AVADAFORMS_EXCEL_EXPORT_FORMID_PARAM]
+                            ); ?>&avadaform_export=1&format='+document.getElementById('avada_export_format').value">
                         <?php
                         _e("Export", "avadaforms-excel-export");
                         ?>
@@ -257,11 +273,14 @@ class Avadaforms_Excel_Export_Admin {
         }
     }
 
-    public function add_action_links($links){
+    public function add_action_links($links)
+    {
         return array_merge(
-                $links,
+            $links,
             [
-                    '<a href="'.admin_url().'admin.php?page=avada-forms">'.__('Avada Forms', 'avadaforms-excel-export').'</a>'
+                '<a href="'.admin_url().'admin.php?page=avada-forms">'.__(
+                    'Avada Forms', 'avadaforms-excel-export'
+                ).'</a>',
             ]
         );
     }
