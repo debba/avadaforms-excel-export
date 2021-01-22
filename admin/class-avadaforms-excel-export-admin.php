@@ -115,10 +115,8 @@ class Avadaforms_Excel_Export_Admin {
 
             $form_submissions = $submissions->get(
                 [
-                    'where'    => ['form_id' => $form_id],
-                    'limit'    => -1,
+                    'where'    => [ 'form_id' => $form_id ],
                     'order by' => 'id DESC',
-                    'offset'   => 0,
                 ]
             );
 
