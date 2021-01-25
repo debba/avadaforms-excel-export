@@ -114,65 +114,107 @@ class Avadaforms_Excel_Export_Admin
         ) {
             $form_id = intval($_GET[AVADAFORMS_EXCEL_EXPORT_FORMID_PARAM]);
 
-            $submissions = new Fusion_Form_DB_Submissions();
+            $form_submission = null;
+            $form_fields     = null;
+            $form_entries    = null;
 
-            $fusion_forms = new Fusion_Form_DB_Forms();
-            $form_fields  = $fusion_forms->get_form_fields($form_id);
-
-            $form_submissions = $submissions->get(
+            $form_submissions = new Fusion_Form_DB_Submissions();
+            $form_submissions = $form_submissions->get(
                 [
                     'where'    => ['form_id' => $form_id],
                     'order by' => 'id DESC',
                 ]
             );
 
-            $data         = [];
-            $form_entries = [];
+            if (count($form_submissions) > 0) {
+                $form_submission = $form_submissions[0];
+            }
 
-            $fusion_entries = new Fusion_Form_DB_Entries();
-
-            foreach ($form_submissions as $submission) {
-                $form_entries[$submission->id] = $fusion_entries->get(
-                    [
-                        'where' => ['submission_id' => $submission->id],
-                    ]
+            if (is_null($form_submission)) {
+                wp_die(
+                    __(
+                        'No form submission was found',
+                        'avadaforms-excel-export'
+                    )
                 );
             }
 
-            $keys = [];
+            $fusion_forms   = new Fusion_Form_DB_Forms();
+            $form_fields_ob = $fusion_forms->get_form_fields($form_id);
 
-            foreach ($form_entries as $key => $entries) {
-                $entries = (array)$entries;
+            if (count($form_fields_ob) > 0) {
+                $form_fields = $form_fields_ob;
+            }
 
-                foreach ($entries as $entry) {
-                    $entry = (array)$entry;
-                    foreach ($form_fields as $field) {
-                        if (isset($entry['field_id'])
-                            && $entry['field_id'] === $field->id
-                        ) {
-                            $field_label              = ''
-                            !== $field->field_label
-                                ? $field->field_label : $field->field_name;
-                            $field_label              = apply_filters(
-                                'avadaforms_export_fieldname', $field_label,
-                                $form_id, $field
-                            );
-                            $field_data               = $entry['value'];
-                            $data[$key][$field_label] = apply_filters(
-                                'avadaforms_export_fieldvalue', $field_data,
-                                $form_id, $field, $form_entries
-                            );
-                            $data[$key][$field_label] = apply_filters(
-                                'avadaforms_export_fieldvalue_form'.$form_id."_field".$field->id, $data[$key][$field_label], $form_entries
-                            );
-                            $keys[]                   = $field_label;
-                            break;
-                        }
+            if (is_null($form_fields)) {
+                wp_die(
+                    __(
+                        'No form fields was found',
+                        'avadaforms-excel-export'
+                    )
+                );
+            }
+
+            $fusion_entries = new Fusion_Form_DB_Entries();
+            $fusion_entries = $fusion_entries->get(
+                [
+                    'where' => ['submission_id' => $form_submission->id],
+                ]
+            );
+
+            if (count($fusion_entries) > 0) {
+                $form_entries = $fusion_entries;
+            }
+
+            if (is_null($form_entries)) {
+                wp_die(
+                    __(
+                        'No form entries was found',
+                        'avadaforms-excel-export'
+                    )
+                );
+            }
+
+
+            $data = [];
+            $headers = [];
+
+            foreach ($form_entries as $entry) {
+                $entry = (array)$entry;
+                $temp_data = [];
+                foreach ($form_fields as $field) {
+                    if (isset($entry['field_id'])
+                        && $entry['field_id'] === $field->id
+                    ) {
+                        $field_label = ''
+                        !== $field->field_label
+                            ? $field->field_label : $field->field_name;
+                        $field_label = apply_filters(
+                            'avadaforms_export_fieldname', $field_label,
+                            $form_id
+                        );
+                        $field_label = apply_filters(
+                            'avadaforms_export_fieldname_form_'.$form_id, $field_label,
+                        );
+                        $field_data  = $entry['value'];
+
+                        $field_value = apply_filters(
+                            'avadaforms_export_fieldvalue', $field_data,
+                            $form_id, $field, $form_entries
+                        );
+                        $field_value = apply_filters(
+                            'avadaforms_export_fieldvalue_form_'.$form_id
+                            ."_field".$field->id, $field_value,
+                            $form_entries
+                        );
+
+                        $temp_data[$field_label] = $field_value;
+                        break;
                     }
                 }
-
-                if ( ! isset($data[$key])) {
-                    $data[$key] = [];
+                $data[] = $temp_data;
+                if (empty($headers)){
+                    $headers = array_keys($temp_data);
                 }
             }
 
@@ -186,7 +228,7 @@ class Avadaforms_Excel_Export_Admin
 
             // # prepare the data set
             $data = array_merge(
-                [array_keys($data[array_key_first($data)])],
+                [$headers],
                 $data
             );
 

@@ -39,14 +39,14 @@ Yes, for this purpose you can use the filter `avadaforms_export_fieldname`
 
 `
 
-function custom_fieldname($field_label,$form_id,$field){
+function custom_fieldname($field_label,$form_id){
     // $field_label is the current Label as defined in Avada Form Builder
     // $form_id is the Avada Form ID
     // $field is an object as {id: 'Avada Field ID', field_name: 'Avada Field Name', field_label: 'Avada Field Label as defined in Avada Form Builder'
     return $field_label;
 }
 
-add_filter('avadaforms_export_fieldname', 'custom_fieldname',10, 3);
+add_filter('avadaforms_export_fieldname', 'custom_fieldname',10, 2);
 `
 
 = Can I customize field values? =
