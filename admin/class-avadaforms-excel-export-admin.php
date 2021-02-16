@@ -155,7 +155,7 @@ class Avadaforms_Excel_Export_Admin
                                 ? $field->field_label : $field->field_name;
                             $field_label              = apply_filters(
                                 'avadaforms_export_fieldname', $field_label,
-                                $form_id, $field
+                                $form_id, $field, $entry['field_id']
                             );
                             $field_data               = $entry['value'];
                             $data[$key][$field_label] = apply_filters(
